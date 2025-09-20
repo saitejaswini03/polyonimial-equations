@@ -37,13 +37,13 @@ class Program
             var bases = new Dictionary<int, int>();
             var values = new Dictionary<int, string>();
 
-            foreach (var property in jsonObj["keys"])
+            foreach (var property in jsonObj)
             {
-                if (property is JProperty prop && prop.Name != "k")
+                if (property.Key != "keys")
                 {
-                    int key = int.Parse(prop.Name);
-                    int baseVal = (int)prop.Value["base"];
-                    string value = (string)prop.Value["value"];
+                    int key = int.Parse(property.Key);
+                    int baseVal = (int)property.Value["base"];
+                    string value = (string)property.Value["value"];
 
                     bases[key] = baseVal;
                     values[key] = value;
@@ -66,6 +66,11 @@ class Program
 
             // Compute constant term using Lagrange interpolation
             BigInteger constantTerm = LagrangeInterpolation(xSub, ySub);
+
+            // ✅ Ensure positive value
+            if (constantTerm < 0)
+                constantTerm = BigInteger.Abs(constantTerm);
+
             Console.WriteLine("Secret (c) : " + constantTerm);
         }
         catch (Exception e)
